@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nguyễn Tiến Đạt — Backend Engineer</title>
+<meta name="description" content="Backend engineer in Hanoi. Java/Go systems, verified with tests, load, and sometimes Z3.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10151F;
+    --panel:#161D2B;
+    --panel-2:#1B2333;
+    --border:#2A3446;
+    --text:#E9EDF5;
+    --muted:#8B93A7;
+    --muted-2:#5C6579;
+    --gold:#E8B95C;
+    --gold-dim:#8a713a;
+    --teal:#5FB8A6;
+    --max:920px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--gold); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 24px;}
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:sticky; top:0; z-index:10;
+    background:rgba(16,21,31,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    max-width:var(--max); margin:0 auto; padding:16px 24px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .nav-name{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px; color:var(--muted); letter-spacing:0.02em;
+  }
+  .nav-links{display:flex; gap:24px; list-style:none; margin:0; padding:0;}
+  .nav-links a{
+    color:var(--muted); font-size:14px; font-family:'IBM Plex Mono',monospace;
+  }
+  .nav-links a:hover{color:var(--gold); text-decoration:none;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:88px 0 64px; position:relative;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px; color:var(--teal); letter-spacing:0.08em;
+    text-transform:uppercase; margin-bottom:20px;
+  }
+  .eyebrow::before{content:"$ "; color:var(--muted-2);}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(34px, 5.4vw, 54px);
+    line-height:1.12;
+    margin:0 0 24px;
+    max-width:14ch;
+  }
+  h1 em{font-style:italic; color:var(--gold); font-weight:500;}
+  .lede{
+    font-size:18px; color:var(--muted); max-width:52ch; margin:0 0 36px;
+  }
+  .hero-bottom{
+    display:flex; align-items:center; gap:28px; flex-wrap:wrap;
+  }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600; font-size:13px; letter-spacing:0.06em;
+    color:var(--gold);
+    border:1.5px solid var(--gold);
+    border-radius:6px;
+    padding:7px 14px;
+    display:inline-flex; align-items:center; gap:6px;
+    transform:rotate(-4deg);
+    white-space:nowrap;
+    opacity:0; transform-origin:center;
+  }
+  .stamp::before{content:"✓"; font-weight:700;}
+  .stamp.settle{animation:stampSettle 0.5s cubic-bezier(.2,1.4,.4,1) forwards;}
+  @keyframes stampSettle{
+    0%{opacity:0; transform:rotate(-16deg) scale(1.4);}
+    70%{opacity:1;}
+    100%{opacity:1; transform:rotate(-4deg) scale(1);}
+  }
+  .hero-links{display:flex; gap:18px; font-family:'IBM Plex Mono',monospace; font-size:14px;}
+  .hero-links a{color:var(--muted);}
+  .hero-links a:hover{color:var(--gold);}
+
+  /* ---------- section shell ---------- */
+  section{padding:56px 0;}
+  .section-head{
+    display:flex; align-items:baseline; gap:14px;
+    margin-bottom:36px; padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .section-num{
+    font-family:'IBM Plex Mono',monospace; color:var(--muted-2); font-size:14px;
+  }
+  .section-head h2{
+    font-family:'Fraunces',serif; font-weight:500; font-size:26px; margin:0;
+  }
+  .section-note{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted-2);
+    margin-left:auto;
+  }
+
+  /* ---------- ledger card ---------- */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:28px 28px 24px;
+    margin-bottom:20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card-top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px; margin-bottom:14px;
+  }
+  .card-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted-2);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;
+  }
+  .claim{
+    font-family:'Fraunces',serif; font-size:20px; font-weight:500;
+    line-height:1.35; margin:0; max-width:60ch;
+  }
+  .verdict{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600;
+    letter-spacing:0.06em; white-space:nowrap; flex-shrink:0;
+    border-radius:5px; padding:5px 10px; transform:rotate(-3deg);
+    border:1.5px solid var(--gold-dim); color:var(--muted);
+  }
+  .verdict.shipped{border-color:var(--gold); color:var(--gold);}
+  .verdict.shipped::before{content:"✓ ";}
+
+  .evidence{
+    list-style:none; margin:16px 0 18px; padding:0;
+  }
+  .evidence li{
+    position:relative; padding-left:20px; margin-bottom:9px;
+    font-size:14.5px; color:var(--muted);
+  }
+  .evidence li::before{
+    content:"—"; position:absolute; left:0; color:var(--teal);
+  }
+  .evidence code{
+    font-family:'IBM Plex Mono',monospace; font-size:0.88em;
+    background:var(--panel-2); padding:1px 5px; border-radius:3px; color:var(--text);
+  }
+
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+  .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--teal);
+    background:rgba(95,184,166,0.09); border:1px solid rgba(95,184,166,0.25);
+    padding:3px 9px; border-radius:4px;
+  }
+  .card-link{
+    font-family:'IBM Plex Mono',monospace; font-size:13.5px;
+    display:inline-flex; align-items:center; gap:4px;
+  }
+  .card-link::after{content:"→"; transition:transform 0.15s;}
+  .card-link:hover::after{transform:translateX(3px);}
+
+  /* ---------- OSS table ---------- */
+  .oss-row{
+    display:grid; grid-template-columns:1.4fr 2.6fr 1fr;
+    gap:16px; align-items:center;
+    padding:16px 0; border-bottom:1px solid var(--border);
+  }
+  .oss-row:last-child{border-bottom:none;}
+  .oss-repo{font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600;}
+  .oss-repo a{color:var(--text);}
+  .oss-repo a:hover{color:var(--gold);}
+  .oss-desc{font-size:14px; color:var(--muted);}
+  .oss-verdict{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600;
+    text-align:right; letter-spacing:0.05em;
+  }
+  .oss-verdict.merged{color:var(--gold);}
+  .oss-verdict.review{color:var(--muted-2);}
+  @media (max-width:640px){
+    .oss-row{grid-template-columns:1fr; gap:4px;}
+    .oss-verdict{text-align:left;}
+  }
+
+  /* ---------- academic ---------- */
+  .academic-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:16px;
+  }
+  .mini-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding:20px;
+  }
+  .mini-card .card-label{margin-bottom:8px;}
+  .mini-card h3{
+    font-family:'Fraunces',serif; font-size:16px; font-weight:500; margin:0 0 8px;
+  }
+  .mini-card p{font-size:13.5px; color:var(--muted); margin:0 0 12px;}
+  .mini-card a{font-family:'IBM Plex Mono',monospace; font-size:12.5px;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--border); padding:40px 0 56px;
+    margin-top:24px;
+  }
+  .footer-grid{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:24px;
+  }
+  .footer-left h2{
+    font-family:'Fraunces',serif; font-size:22px; font-weight:500; margin:0 0 8px;
+  }
+  .footer-left p{color:var(--muted); font-size:14px; margin:0 0 14px; max-width:40ch;}
+  .footer-links{display:flex; gap:18px; font-family:'IBM Plex Mono',monospace; font-size:13.5px;}
+  .certs{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted-2);
+    text-align:right; line-height:1.9;
+  }
+  @media (max-width:600px){
+    .footer-grid{flex-direction:column; align-items:flex-start;}
+    .certs{text-align:left;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <span class="nav-name">ntd377</span>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#oss">OSS</a></li>
+      <li><a href="#academic">Academic</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">whoami</div>
+    <h1>I prove backend systems are correct — not just that they <em>compile</em>.</h1>
+    <p class="lede">Nguyễn Tiến Đạt. Backend engineer in Hanoi, building Java &amp; Go systems — and increasingly, verifying them formally with Z3.</p>
+    <div class="hero-bottom">
+      <span class="stamp" id="heroStamp">3 PRs filed &amp; reviewed</span>
+      <div class="hero-links">
+        <a href="https://github.com/NguyenTienDat377" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/dat-nguyen-tien-2b734b21a/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:ntdat377@gmail.com">Email</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2>The Ledger</h2>
+      <span class="section-note">claim → evidence → verdict</span>
+    </div>
+
+    <article class="card">
+      <div class="card-top">
+        <div>
+          <div class="card-label">API Billing Platform · abp</div>
+          <p class="claim">Concurrent merchant top-ups never lose an update, even under load.</p>
+        </div>
+        <span class="verdict shipped">load-tested</span>
+      </div>
+      <ul class="evidence">
+        <li>Atomic <code>INSERT … ON CONFLICT DO UPDATE</code> — not a read-then-write race — plus a DB-level unique constraint so double-subscribes can't slip through an app-level check.</li>
+        <li>Per-merchant Resilience4j bulkhead + circuit breaker, so one broken merchant can't starve every other tenant's requests.</li>
+        <li>Redis cache-aside for merchant routing/pricing (read:write ratio ~10⁵), with a fail-open <code>CacheErrorHandler</code> — a dead cache degrades the path, it doesn't take the gateway down.</li>
+        <li>RabbitMQ drives the operational write; the same event republishes to Kafka, partitioned by merchant, as a durable and independently replayable audit log.</li>
+        <li>Proven with dedicated k6 load tests and Testcontainers integration tests, not just unit coverage.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">Resilience4j</span>
+        <span class="tag">Kafka</span><span class="tag">RabbitMQ</span><span class="tag">Redis</span><span class="tag">PostgreSQL</span>
+      </div>
+      <a class="card-link" href="https://github.com/NguyenTienDat377/abp" target="_blank" rel="noopener">View repo</a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div>
+          <div class="card-label">Skolem</div>
+          <p class="claim">Two SQL queries are semantically equivalent — or here's the exact row where they disagree.</p>
+        </div>
+        <span class="verdict shipped">Z3-backed</span>
+      </div>
+      <ul class="evidence">
+        <li>Formal equivalence checking via Z3 SMT solving — deterministic proof, not linting or heuristics.</li>
+        <li>Three surfaces on one engine: a web UI, a CI/CD JSON endpoint, and an MCP server so AI coding agents call verification in-loop, powering a counterexample-driven self-healing repair.</li>
+        <li>Fails closed on unsupported SQL — an unencodable predicate is rejected, never silently dropped into a false "equivalent."</li>
+        <li>A <code>divergent</code> verdict is re-run against a concrete SQLite witness before being trusted, catching encoder bugs instead of showing a fake counterexample.</li>
+        <li>Auth, per-project API keys, Supabase/Postgres with RLS, billing via Lemon Squeezy, circuit breaker on LLM calls.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Z3 / SMT</span><span class="tag">Supabase</span><span class="tag">Docker</span>
+      </div>
+      <a class="card-link" href="https://github.com/NguyenTienDat377/Skolem" target="_blank" rel="noopener">View repo</a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div>
+          <div class="card-label">InstaClone</div>
+          <p class="claim">Sessions survive a horizontal scale-out, not just a single instance.</p>
+        </div>
+        <span class="verdict shipped">containerized</span>
+      </div>
+      <ul class="evidence">
+        <li>Google OAuth2 login via Spring Security with auto-provisioned users.</li>
+        <li>Redis-backed distributed HTTP sessions (Spring Session) — sessions live outside the JVM, so any instance can serve any request.</li>
+        <li>MinIO (S3-compatible) object storage for image uploads.</li>
+        <li>Centralized exception handling via <code>@RestControllerAdvice</code>, mapping domain exceptions to stable HTTP codes.</li>
+        <li>Full stack — MySQL, Redis, MinIO, backend — containerized with Docker Compose; API documented via auto-generated OpenAPI.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java 21</span><span class="tag">Spring Boot 3.5</span><span class="tag">Spring Security</span><span class="tag">Redis</span><span class="tag">MySQL</span><span class="tag">MinIO</span>
+      </div>
+      <a class="card-link" href="https://github.com/NguyenTienDat377/InstaClone" target="_blank" rel="noopener">View repo</a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div>
+          <div class="card-label">go-api-gateway</div>
+          <p class="claim">Routes can change at runtime — no restart, no hand-written SQL.</p>
+        </div>
+        <span class="verdict shipped">thread-safe</span>
+      </div>
+      <ul class="evidence">
+        <li>SQLite-backed route table matched on path, method, and header, behind a router guarded by <code>sync.RWMutex</code> — concurrent reads under exclusive writes.</li>
+        <li>Runtime admin API to register routes on the fly, persisted immediately for the next startup.</li>
+        <li>Two pluggable rate limiters (token bucket, fixed window) — defaults to token bucket to avoid the boundary-burst problem fixed windows allow at the edges.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Go</span><span class="tag">SQLite</span>
+      </div>
+      <a class="card-link" href="https://github.com/NguyenTienDat377/go-api-gateway" target="_blank" rel="noopener">View repo</a>
+    </article>
+  </section>
+
+  <section id="oss">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2>Filed &amp; Reviewed</h2>
+      <span class="section-note">open source</span>
+    </div>
+
+    <div class="oss-row">
+      <div class="oss-repo"><a href="https://github.com/google/highway/pull/3248" target="_blank" rel="noopener">google/highway #3248</a></div>
+      <div class="oss-desc">Ran the full compiler matrix weekly instead of every PR — cut CI jobs per pull request from 28 to 11.</div>
+      <div class="oss-verdict merged">merged</div>
+    </div>
+    <div class="oss-row">
+      <div class="oss-repo"><a href="https://github.com/resilience4j/resilience4j/pull/2503" target="_blank" rel="noopener">resilience4j #2503</a></div>
+      <div class="oss-desc">Made <code>BulkheadConfig</code>'s constructor <code>protected</code> to allow subclassing for custom metadata, with a test proving it.</div>
+      <div class="oss-verdict review">under review</div>
+    </div>
+    <div class="oss-row">
+      <div class="oss-repo"><a href="https://github.com/testcontainers/testcontainers-java/pull/11964" target="_blank" rel="noopener">testcontainers-java #11964</a></div>
+      <div class="oss-desc">Self-found a silent-null-return bug in <code>getSeleniumAddress()</code>; replaced it with a fail-fast exception.</div>
+      <div class="oss-verdict review">under review</div>
+    </div>
+  </section>
+
+  <section id="academic">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2>Before the Proofs</h2>
+      <span class="section-note">constraint solving, academic</span>
+    </div>
+    <div class="academic-grid">
+      <div class="mini-card">
+        <div class="card-label">Bachelor's Thesis</div>
+        <h3>AlienTile</h3>
+        <p>Solver comparison for a tiling/coloring problem across CP-SAT, CPLEX (CP &amp; ILP), and Gurobi.</p>
+        <a href="https://github.com/NguyenTienDat377/AlienTile" target="_blank" rel="noopener">View repo →</a>
+      </div>
+      <div class="mini-card">
+        <div class="card-label">Related work</div>
+        <h3>BoardPackagingSATConvert</h3>
+        <p>Pseudo-Boolean SAT encoding for the Board Packing Problem, in Java.</p>
+        <a href="https://github.com/NguyenTienDat377/BoardPackagingSATConvert" target="_blank" rel="noopener">View repo →</a>
+      </div>
+      <div class="mini-card">
+        <div class="card-label">ESLab</div>
+        <h3>UniCorT</h3>
+        <p>SAT/MaxSAT university course timetabling via Google OR-Tools CP-SAT.</p>
+        <a href="https://github.com/NguyenTienDat377/UniCorT" target="_blank" rel="noopener">View repo →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-grid">
+      <div class="footer-left">
+        <h2>Let's talk backend.</h2>
+        <p>Open to backend engineering roles — Java, Go, and systems that need to be provably correct, not just tested.</p>
+        <div class="footer-links">
+          <a href="mailto:ntdat377@gmail.com">ntdat377@gmail.com</a>
+          <a href="https://github.com/NguyenTienDat377" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/dat-nguyen-tien-2b734b21a/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div class="certs">
+        AWS Cloud Practitioner<br>
+        Kaggle Bronze Medal — 238/3559<br>
+        IELTS 7.0 Overall (C1)<br>
+        Semi-Finalist, Code Tour 2024
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Settle the hero stamp once on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const stamp = document.getElementById('heroStamp');
+    requestAnimationFrame(() => stamp.classList.add('settle'));
+  });
+</script>
+
+</body>
+</html>
