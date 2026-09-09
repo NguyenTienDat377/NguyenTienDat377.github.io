@@ -370,6 +370,28 @@
       </div>
       <a class="card-link" href="https://github.com/NguyenTienDat377/go-api-gateway" target="_blank" rel="noopener">View repo</a>
     </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div>
+          <div class="card-label">arxiv-lens</div>
+          <p class="claim">Two extraction runs on the same papers must produce the same graph — or the build refuses to ship.</p>
+        </div>
+        <span class="verdict shipped">drift-gated</span>
+      </div>
+      <ul class="evidence">
+        <li>Closed ontology — 6 entity types, 6 relations with domain/range constraints — enforced as a decoding constraint on structured extraction, a mechanical repair rule for schema violations, and a canonicalization tiebreak, not schema-free extraction.</li>
+        <li>A structural drift gate diffs snapshot N against N+1 and exits non-zero the moment unchanged inputs produce a different graph, refusing to promote a bad build into Neo4j.</li>
+        <li>Z3 encodes the ontology's transitivity, asymmetry, and irreflexivity, surfacing a minimal unsat core for contradictions that span multiple papers — no single paper wrong on its own.</li>
+        <li>Two services glued by Kafka (async <code>graph.updated</code>) and gRPC (sync queries): a hexagonal Spring Boot query-service whose Caffeine cache-aside layer cuts <code>/api/stats</code> from a 4.1s cold traversal to 8ms cached.</li>
+        <li>Benchmarked against a conventional vector-RAG baseline on the same golden questions — full paper recall vs. 61% for vector search, and vector retrieval can't represent "no relationship exists" since top-k always returns k results.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">Python</span>
+        <span class="tag">Kafka</span><span class="tag">gRPC</span><span class="tag">Neo4j</span><span class="tag">Z3 / SMT</span><span class="tag">Docker</span>
+      </div>
+      <a class="card-link" href="https://github.com/NguyenTienDat377/arxiv-lens" target="_blank" rel="noopener">View repo</a>
+    </article>
   </section>
 
   <section id="oss">
