@@ -313,6 +313,31 @@
     <article class="card">
       <div class="card-top">
         <div>
+          <div class="card-label">ladder</div>
+          <p class="claim">A video only becomes playable once every rendition exists — and two workers finishing at the same moment can't break that.</p>
+        </div>
+        <span class="verdict">in progress</span>
+      </div>
+      <ul class="evidence">
+        <li>Adaptive-bitrate video platform, built solo: upload → FFmpeg transcodes four renditions (1080p/720p/480p/240p) into ~10s HLS segments → playback with a live quality ladder, plus search, a feed and channel pages.</li>
+        <li>Uploads bypass the API via a single-use presigned URL; <code>/complete</code> checks the object actually exists in storage before queueing work, rather than trusting the client.</li>
+        <li>One RabbitMQ message per rendition, with an idempotent <code>INSERT … ON CONFLICT DO UPDATE</code> so at-least-once redelivery is harmless; retried twice, then dead-lettered and the video marked <code>FAILED</code>.</li>
+        <li>No coordinator process: the last worker to commit sees all four rows, writes <code>master.m3u8</code>, then a conditional <code>UPDATE … WHERE status = 'PROCESSING'</code> lets exactly one flip the video to <code>READY</code>. Reasoned through; not yet tested under real concurrency.</li>
+        <li>Scoped RBAC that fails closed: channel roles and platform roles live in two separate tables, because a single table with a nullable <code>channel_id</code> lets one forgotten <code>IS NULL</code> silently promote a channel grant to a global one. Endpoints check permission keys, never role names.</li>
+        <li>Keyframes pinned every 48 frames with scene-cut detection off, so renditions align and a player can switch rungs cleanly.</li>
+        <li>Counts split by need: like and subscriber counts are exact (recounted under a row lock, with a 20-concurrent-user test), while view counts are deliberately eventual via Redis <code>SET NX EX</code> and a batched flush.</li>
+        <li>Known gaps are listed in the README as decisions, not hidden — no resumable upload, no transactional outbox yet, worker still runs in the API process.</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Java</span><span class="tag">Spring Boot 4</span><span class="tag">RabbitMQ</span>
+        <span class="tag">PostgreSQL 18</span><span class="tag">Redis</span><span class="tag">FFmpeg / HLS</span><span class="tag">S3 API</span>
+      </div>
+      <a class="card-link" href="https://github.com/NguyenTienDat377/ladder" target="_blank" rel="noopener">View repo</a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div>
           <div class="card-label">Skolem</div>
           <p class="claim">Two SQL queries are semantically equivalent — or here's the exact row where they disagree.</p>
         </div>
